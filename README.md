@@ -115,6 +115,9 @@ The project structure of the UREP Backend Server is organized as follows:
 │   └── dto/
 │
 ├── config
+│   ├── .env.development.local
+│   ├── .env.production.local
+│   ├── .env.example
 │   └── configuration.ts
 │
 ├── database # Database Module using Drizzle ORM for database interactions
