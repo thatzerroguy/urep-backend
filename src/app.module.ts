@@ -5,6 +5,8 @@ import { AdminModule } from './admin/admin.module';
 import { NinModule } from './nin/nin.module';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
@@ -14,6 +16,11 @@ import { DatabaseModule } from './database/database.module';
     NinModule,
     AuthModule,
     DatabaseModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env.development',
+      load: [configuration],
+    }),
   ],
   controllers: [],
   providers: [],
