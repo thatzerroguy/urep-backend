@@ -73,7 +73,7 @@ The architecture of the UREP Backend Server follows a modular design pattern, en
 - **DTOs (Data Transfer Objects)**: Define the shape of data sent over the network
 
 ### Database Design
-TODO: Add ER Diagram and explanation of tables and relationships.
+<img src="./img.png" alt="database design">
 <hr>
 
 ### Architecture Diagram
