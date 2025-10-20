@@ -18,10 +18,7 @@ import configuration from './config/configuration';
     DatabaseModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [
-        '.env.development.local.local',
-        '.env.production.local.local',
-      ],
+      envFilePath: ['.env.development.local', '.env.production.local.local'],
       load: [configuration],
     }),
   ],
