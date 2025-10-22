@@ -12,11 +12,15 @@ import { userSchema } from '../database/schema';
 import { eq } from 'drizzle-orm';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  constructor(@Inject('DRIZZLE') private readonly db: DrizzleDatabase) {}
+  constructor(
+    @Inject('DRIZZLE') private readonly db: DrizzleDatabase,
+    private readonly jwt: JwtService,
+  ) {}
 
   async _signUp(signDto: CreateUserDto) {
     try {
@@ -38,14 +42,16 @@ export class AuthService {
           ...signDto,
           created_at: new Date(),
         })
-        .returning({ id: userSchema.id });
+        .returning({ id: userSchema.id, email: userSchema.email });
 
-      //TODO: Generate JWT token
+      // Generate JWT token
+      const payload = { sub: user.id, email: user.email };
+      const token = this._generateToken(payload);
 
       return {
         message: 'User successfully created',
         uuid: user.id,
-        //token: token,
+        token: token,
         status: HttpStatus.CREATED,
       };
     } catch (error) {
@@ -79,11 +85,11 @@ export class AuthService {
       }
 
       // Generate JWT token
-      //TODO: Generate JWT token
+      const token = this._generateToken({ sub: user.id, email: user.email });
 
       return {
         message: 'User logged in successfully',
-        //token: token,
+        token: token,
         uuid: user.id,
         status: HttpStatus.OK,
       };
@@ -96,5 +102,9 @@ export class AuthService {
         error: 'Internal server error',
       });
     }
+  }
+
+  private _generateToken(payload: { sub: string; email: string }) {
+    return this.jwt.sign(payload);
   }
 }
