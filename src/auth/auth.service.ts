@@ -8,11 +8,12 @@ import {
 } from '@nestjs/common';
 import { DrizzleDatabase } from '../database/database.types';
 import { CreateUserDto } from './dto/create-user.dto';
-import { userSchema } from '../database/schema';
+import { programInfoSchema, userSchema } from '../database/schema';
 import { eq } from 'drizzle-orm';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ProgramInfoDto } from './dto/program-info.dto';
 
 @Injectable()
 export class AuthService {
@@ -106,5 +107,32 @@ export class AuthService {
 
   private _generateToken(payload: { sub: string; email: string }) {
     return this.jwt.sign(payload);
+  }
+
+  async _programInfo(uuid: string, infoDto: ProgramInfoDto) {
+    return this.db.transaction(async (tx) => {
+      // Check if user exists
+      const user = await tx.query.userSchema.findFirst({
+        where: eq(userSchema.id, uuid),
+      });
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Create program info
+      const programInfo = await tx
+        .insert(programInfoSchema)
+        .values({
+          ...infoDto,
+          user_id: user.id,
+        })
+        .returning();
+
+      return {
+        message: 'Program info created successfully',
+        data: programInfo,
+        status: HttpStatus.CREATED,
+      };
+    });
   }
 }

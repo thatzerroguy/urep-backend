@@ -3,6 +3,8 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseUUIDPipe,
   Post,
   UsePipes,
 } from '@nestjs/common';
@@ -14,6 +16,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -21,6 +24,7 @@ import { AuthService } from './auth.service';
 import { ValidationPipe } from '../validation/validation.pipe';
 import { CreateUserDto, createUserSchema } from './dto/create-user.dto';
 import { LoginDto, loginSchema } from './dto/login.dto';
+import { ProgramInfoDto, programInfoSchema } from './dto/program-info.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -151,5 +155,84 @@ export class AuthController {
   })
   async login(@Body() loginDto: LoginDto) {
     return await this.authService._login(loginDto);
+  }
+
+  @Post('program-info')
+  @HttpCode(HttpStatus.CREATED)
+  @UsePipes(new ValidationPipe(programInfoSchema))
+  @ApiOperation({
+    summary: 'Submit program information',
+    description: 'Submit additional program-related information for a user',
+  })
+  @ApiParam({
+    name: 'uuid',
+    description: 'User UUID',
+    type: String,
+    format: 'uuid',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiBody({
+    type: ProgramInfoDto,
+    description: 'Program information details',
+    examples: {
+      example1: {
+        summary: 'Sample program information',
+        value: {
+          programme: 'Youth Development Program',
+          expectations: 'Learn new skills and gain experience',
+          knowledge: 'Basic computer skills and programming',
+          organization: 'IDCODE Foundation',
+          similar_participation: 'Yes, participated in tech bootcamp',
+          previous_fmyd: 'No',
+        },
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    description: 'Program information submitted successfully',
+    schema: {
+      example: {
+        message: 'Program information saved successfully',
+        status: 201,
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or unauthorized UUID',
+    schema: {
+      example: {
+        message: 'Unauthorized',
+        statusCode: 401,
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    schema: {
+      example: {
+        message: 'User not found',
+        statusCode: 404,
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error',
+    schema: {
+      example: {
+        error: 'Internal server error',
+        statusCode: 500,
+      },
+    },
+  })
+  async programInfo(
+    @Param(
+      'uuid',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.UNAUTHORIZED }),
+    )
+    uuid: string,
+    @Body()
+    infoDto: ProgramInfoDto,
+  ) {
+    return await this.authService._programInfo(uuid, infoDto);
   }
 }
