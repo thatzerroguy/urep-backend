@@ -50,6 +50,13 @@
       "when": 1761466692107,
       "tag": "0006_strange_the_initiative",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1761467083475,
+      "tag": "0007_reflective_the_renegades",
+      "breakpoints": true
     }
   ]
 }

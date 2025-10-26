@@ -1,0 +1,2 @@
+ALTER TABLE admin DROP COLUMN id;
+ALTER TABLE admin ADD COLUMN id uuid DEFAULT gen_random_uuid() PRIMARY KEY;
