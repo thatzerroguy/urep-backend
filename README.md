@@ -51,6 +51,7 @@ The UREP Backend Server is built using the following technologies:
 - **JWT for Authentication**
 - **Gmail SMTP for Email Services**
 - **RESTful API Design**
+- **Zod for DTO Validation**
 - **Docker for Containerization**
 - **Swagger for API Documentation**
 - **CI/CD Pipelines for Automated Deployment**
@@ -64,8 +65,7 @@ The architecture of the UREP Backend Server follows a modular design pattern, en
 - **Controllers**: Handle incoming HTTP requests and route them to the appropriate services.
 - **Services**: Contain the business logic and interact with the database through repositories.
 - **Modules**: Organize the application into cohesive units, grouping related controllers and services.
-- **Repositories**: Manage data access and database operations using Drizzle ORM.
-- **Entities/Models**: Define the data structures and relationships in the PostgreSQL database.
+- **Schemas**: Define the data structures and relationships in the PostgreSQL database.
 - **Middleware**: Implement cross-cutting concerns such as authentication, logging, and error handling.
 - **Configuration**: Manage environment-specific settings and secrets securely.
 - **Guard**: Implement role-based access control for protected routes.
@@ -73,7 +73,7 @@ The architecture of the UREP Backend Server follows a modular design pattern, en
 - **DTOs (Data Transfer Objects)**: Define the shape of data sent over the network
 
 ### Database Design
-TODO: Add ER Diagram and explanation of tables and relationships.
+<img src="./img.png" alt="database design">
 <hr>
 
 ### Architecture Diagram

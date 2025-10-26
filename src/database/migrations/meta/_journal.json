@@ -36,6 +36,13 @@
       "when": 1760870308541,
       "tag": "0004_rare_vanisher",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1761278274916,
+      "tag": "0005_illegal_hedge_knight",
+      "breakpoints": true
     }
   ]
 }
