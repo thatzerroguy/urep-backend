@@ -11,7 +11,6 @@ import { LoginDto } from './dto/login.dto';
 import { eq } from 'drizzle-orm';
 import { adminSchema } from '../database/schema';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService {
@@ -32,10 +31,7 @@ export class AdminService {
       }
 
       // Compare passwords
-      const isPasswordValid = await bcrypt.compare(
-        loginDto.password,
-        admin.password,
-      );
+      const isPasswordValid = admin.password === loginDto.password;
       if (!isPasswordValid) {
         throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
       }
