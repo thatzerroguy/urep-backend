@@ -6,6 +6,7 @@ import { NinModule } from './nin/nin.module';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { FormfieldModule } from './formfield/formfield.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -24,6 +25,7 @@ import configuration from './config/configuration';
       ],
       load: [configuration],
     }),
+    FormfieldModule,
   ],
   controllers: [],
   providers: [],
