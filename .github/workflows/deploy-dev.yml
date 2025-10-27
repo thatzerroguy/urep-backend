@@ -3,10 +3,10 @@ name: Deploy Dev to Render
 on:
   push:
     branches:
-      - devloop
+      - develop
   pull_request:
     branches:
-      - devloop
+      - develop
     types: [closed]
 
 jobs:
