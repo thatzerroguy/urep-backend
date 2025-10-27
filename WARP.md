@@ -105,12 +105,13 @@ Include id, timestamps, relations
 Path: database/schema/{table}.schema.ts
 description: Generate DB schema.
 
-## Generate Tests
+## Write Tests
 ai_command: |
-Generate Jest tests for: {FILE_PATH}
-Mock dependencies, test all methods
-Include auth/role test cases
-description: Generate test suite.
+Generate Jest test suite for NestJS module: {MODULE}
+- Create tests for controller, service, and DTO validation
+- Include mocks for dependencies
+- Use describe/it structure and proper assertions
+  description: Generate Jest tests for module.
 
 ## Add Swagger Docs
 ai_command: |
@@ -127,6 +128,32 @@ Use @ApiProperty with examples, descriptions
 Add @ApiPropertyOptional for optional fields
 Include validation constraints in descriptions
 description: Document DTO with Swagger decorators.
+
+---
+
+# 🚀 Deployment
+
+## Deploy to Render (dev)
+ai_command: |
+Generate GitHub Actions workflow named "deploy-dev.yml" for branch `devloop`
+- Use pnpm
+- Run tests before build (pnpm run test)
+- Build with Dockerfile.dev
+- Push image to Render using RENDER_API_KEY and RENDER_SERVICE_ID
+- Trigger deployment on push/merge to devloop
+  Path: .github/workflows/deploy-dev.yml
+  description: Deploy dev branch to Render (with test check).
+
+## Deploy to GCP (prod)
+ai_command: |
+Generate GitHub Actions workflow named "deploy-prod.yml" for branch `main`
+- Use pnpm
+- Run tests before build (pnpm run test)
+- Build with Dockerfile.prod
+- Push image to Google Artifact Registry
+- Deploy to GKE cluster using GCP_SA_KEY, GCP_PROJECT_ID, GKE_CLUSTER, GKE_ZONE
+  Path: .github/workflows/deploy-prod.yml
+  description: Deploy main branch to Google Cloud (with test check).
 
 ---
 
