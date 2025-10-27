@@ -35,21 +35,10 @@ jobs:
           ls -la
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run tests
         run: pnpm run test
-
-      - name: Build Docker image
-        run: docker build -t urep-backend-dev:${{ github.sha }} -f Dockerfile.dev .
-
-      - name: Login to Render Registry
-        run: echo "${{ secrets.RENDER_API_KEY }}" | docker login registry.render.com -u render --password-stdin
-
-      - name: Tag and push image
-        run: |
-          docker tag urep-backend-dev:${{ github.sha }} registry.render.com/${{ secrets.RENDER_SERVICE_ID }}:latest
-          docker push registry.render.com/${{ secrets.RENDER_SERVICE_ID }}:latest
 
       - name: Trigger Render Deployment
         run: |
