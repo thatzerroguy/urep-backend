@@ -13,9 +13,10 @@ export const responseSchema = pgTable('responses', {
     })
     .notNull(),
   answer: text('answer').notNull(),
-  registration_id: uuid('registration_id')
-    .references(() => registrationSchema.id, { onDelete: 'cascade' })
-    .notNull(),
+  registration_id: uuid('registration_id').references(
+    () => registrationSchema.id,
+    { onDelete: 'cascade' },
+  ),
   created_at: timestamp('created_at').defaultNow().notNull(),
 });
 
