@@ -1,0 +1,57 @@
+name: Deploy Dev to Render
+
+on:
+  push:
+    branches:
+      - devloop
+  pull_request:
+    branches:
+      - devloop
+    types: [closed]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Build Docker image
+        run: docker build -t urep-backend-dev:${{ github.sha }} -f Dockerfile.dev .
+
+      - name: Login to Render Registry
+        run: echo "${{ secrets.RENDER_API_KEY }}" | docker login registry.render.com -u render --password-stdin
+
+      - name: Tag and push image
+        run: |
+          docker tag urep-backend-dev:${{ github.sha }} registry.render.com/${{ secrets.RENDER_SERVICE_ID }}:latest
+          docker push registry.render.com/${{ secrets.RENDER_SERVICE_ID }}:latest
+
+      - name: Trigger Render deployment
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache": false}'
+
+      - name: Deployment status
+        run: echo "✅ Deployed to Render (dev environment)"
