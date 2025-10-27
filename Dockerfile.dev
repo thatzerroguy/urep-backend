@@ -1,0 +1,38 @@
+# Development Dockerfile
+# Multi-stage build for NestJS application with pnpm
+
+# Stage 1: Base
+FROM node:20-alpine AS base
+
+# Install pnpm globally
+RUN npm install -g pnpm@8
+
+# Set working directory
+WORKDIR /app
+
+# Stage 2: Dependencies
+FROM base AS dependencies
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install all dependencies (including dev dependencies for development)
+RUN pnpm install --frozen-lockfile
+
+# Stage 3: Development
+FROM base AS development
+
+# Copy installed dependencies from dependencies stage
+COPY --from=dependencies /app/node_modules ./node_modules
+
+# Copy application source
+COPY . .
+
+# Expose application port
+EXPOSE 3000
+
+# Set environment to development
+ENV NODE_ENV=development
+
+# Start the application in development mode with hot-reload
+CMD ["pnpm", "run", "start:dev"]
