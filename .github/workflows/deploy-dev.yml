@@ -51,12 +51,11 @@ jobs:
           docker tag urep-backend-dev:${{ github.sha }} registry.render.com/${{ secrets.RENDER_SERVICE_ID }}:latest
           docker push registry.render.com/${{ secrets.RENDER_SERVICE_ID }}:latest
 
-      - name: Trigger Render deployment
+      - name: Trigger Render Deployment
         run: |
-          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"clearCache": false}'
+          curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
       - name: Deployment status
         run: echo "✅ Deployed to Render (dev environment)"
