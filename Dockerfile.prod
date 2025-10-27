@@ -1,0 +1,74 @@
+# Production Dockerfile
+# Multi-stage build for optimized NestJS application with pnpm
+
+# Stage 1: Base
+FROM node:20-alpine AS base
+
+# Install pnpm globally
+RUN npm install -g pnpm@8
+
+# Set working directory
+WORKDIR /app
+
+# Stage 2: Dependencies
+FROM base AS dependencies
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install production dependencies only
+RUN pnpm install --frozen-lockfile --prod
+
+# Stage 3: Build
+FROM base AS build
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install all dependencies (including dev dependencies for build)
+RUN pnpm install --frozen-lockfile
+
+# Copy application source
+COPY . .
+
+# Build the application
+RUN pnpm run build
+
+# Stage 4: Production
+FROM node:20-alpine AS production
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001
+
+# Set working directory
+WORKDIR /app
+
+# Copy production dependencies
+COPY --from=dependencies --chown=nestjs:nodejs /app/node_modules ./node_modules
+
+# Copy built application
+COPY --from=build --chown=nestjs:nodejs /app/dist ./dist
+COPY --from=build --chown=nestjs:nodejs /app/package.json ./
+
+# Switch to non-root user
+USER nestjs
+
+# Expose application port
+EXPOSE 3000
+
+# Set environment to production
+ENV NODE_ENV=production
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["node", "dist/main"]
