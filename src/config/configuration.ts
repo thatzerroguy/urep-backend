@@ -8,4 +8,6 @@ export default () => ({
   smtpHost: process.env.SMTP_HOST,
   smtpPort: parseInt(process.env.SMTP_PORT || '465', 10),
   smtpService: process.env.SMTP_SERVICE,
+  qoreIdClientID: process.env.QOREID_CLIENT_ID,
+  qoreIdSecret: process.env.QOREID_SECRET_KEY,
 });
