@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { FormfieldModule } from './formfield/formfield.module';
 import { ResponseModule } from './response/response.module';
+import { SmsModule } from './sms/sms.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -28,6 +29,7 @@ import configuration from './config/configuration';
     }),
     FormfieldModule,
     ResponseModule,
+    SmsModule,
   ],
   controllers: [],
   providers: [],

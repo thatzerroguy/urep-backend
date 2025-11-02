@@ -10,4 +10,7 @@ export default () => ({
   smtpService: process.env.SMTP_SERVICE,
   qoreIdClientID: process.env.QOREID_CLIENT_ID,
   qoreIdSecret: process.env.QOREID_SECRET_KEY,
+  termiiApiKey: process.env.TERMII_API_KEY,
+  termiiApiSecret: process.env.TERMII_SECRET_KEY,
+  termiiSenderId: process.env.TERMII_SENDER_ID,
 });

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { NinController } from './nin.controller';
 import { NinService } from './nin.service';
+import { SmsService } from '../sms/sms.service';
 
 describe('NinController', () => {
   let controller: NinController;
@@ -16,6 +17,11 @@ describe('NinController', () => {
     }),
   };
 
+  const mockSmsService = {
+    sendOtp: jest.fn(),
+    verifyOtp: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [NinController],
@@ -24,6 +30,10 @@ describe('NinController', () => {
         {
           provide: ConfigService,
           useValue: mockConfigService,
+        },
+        {
+          provide: SmsService,
+          useValue: mockSmsService,
         },
       ],
     }).compile();

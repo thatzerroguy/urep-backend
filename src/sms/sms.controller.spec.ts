@@ -1,45 +1,38 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { NinService } from './nin.service';
-import { SmsService } from '../sms/sms.service';
+import { SmsController } from './sms.controller';
+import { SmsService } from './sms.service';
 
-describe('NinService', () => {
-  let service: NinService;
+describe('SmsController', () => {
+  let controller: SmsController;
 
   const mockConfigService = {
     get: jest.fn((key: string) => {
       const config: Record<string, string> = {
-        qoreIdClientID: 'test-client-id',
-        qoreIdSecret: 'test-secret',
+        termiiApiKey: 'test-api-key',
+        termiiSenderId: 'test-sender',
+        NODE_ENV: 'development',
       };
       return config[key];
     }),
   };
 
-  const mockSmsService = {
-    sendOtp: jest.fn(),
-    verifyOtp: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      controllers: [SmsController],
       providers: [
-        NinService,
+        SmsService,
         {
           provide: ConfigService,
           useValue: mockConfigService,
         },
-        {
-          provide: SmsService,
-          useValue: mockSmsService,
-        },
       ],
     }).compile();
 
-    service = module.get<NinService>(NinService);
+    controller = module.get<SmsController>(SmsController);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(controller).toBeDefined();
   });
 });
